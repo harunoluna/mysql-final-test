@@ -168,6 +168,9 @@ mysql> select * from test2 WHERE comm < 1000;
 3.9 为表2增加一个索引：ename 字段。简述为什么要在 ename 字段建立索引
 
 3.10 将表2的 sal 字段改名为 salary
+```
+ALTER TABLE test2 CHANGE sal salary INT;
+```
 
 3.11 撰写一个函数 get_deptno_from_empno，输入 empno，输出对应的 deptno。 简述函数和存储过程有什么不同。
 
@@ -201,10 +204,13 @@ mysql> show grants for 'zhulei'@'localhost';
 ```
 
 4.3 `with grant option` 是什么意思。
+答：权限传递，使用这个子句时将允百许用户将其权限分配给度他人。
 
 5 表 1 和表 2 这样设计是否符合第一范式，是否符合第二范式，为什么？
+答：表1符合第一范式也符合第二范式，因为表内无重复，各数据可被唯一区分。表2符合第一范式但不符合第二范式，因为表内无重复，但没有存储各个数据的唯一标识。
 
 6 画出表 1 和表 2 所对应的 E-R 图
+
 
 7 什么是外模式，什么是内模式。为什么要分成这几层？
 答：外模式又称子模式或用户模式，对应于用户级。它是某个或某几个用户所看到的数据库的数据视图，是与某一应用有关的数据的逻辑表示。外模式是从模式导出的一个子集，包含模式中允许特定用户使用的那部分数据。用户可以通过外模式描述语言来描述、定义对应于用户的数据记录(外模式)，也可以利用数据操纵语言(Data Manipulation Language，DML)对这些数据记录进行操作。外模式反映了数据库系统的用户观。
@@ -215,7 +221,15 @@ mysql> show grants for 'zhulei'@'localhost';
 答：ACID，指数据库事务正确执行的四个基本要素的缩写。包含：原子性（Atomicity）、一致性（Consistency）、隔离性（Isolation）、持久性（Durability）。一个支持事务（Transaction）的数据库，必须要具有这四种特性，否则在事务过程（Transaction processing）当中无法保证数据的正确性，交易过程极可能达不到交易方的要求。
 
 8.1 编写一个事务，“将 MILLER 的 comm 增加 100，如果增加后的 comm 大于 1000 则回滚”；
-答：
+```
+DELIMITER $$
+CREATE FUNCTION func_test2_comm (comm INT)
+RETURNS DOUBLE
+BEGIN
+update test2 set comm = comm + 100 where (SELECT comm FROM test2 WHERE test2.ename = 'MILLER') < 1000;
+END$$
+DELIMITER ;
+```
 
 8.2 如何查看 MySQL 当前的隔离级别？
 答：show variables like 'transaction_isolation';或者select @@transaction_isolation;
