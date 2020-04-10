@@ -2,9 +2,8 @@
 
 2019-2020 mysql final test
 
-姓名：
-
-学号：
+姓名：竺雷
+学号：17061636
 
 说明1：考试为开卷，可以上网，自觉不要相互电话和QQ；
 
@@ -16,20 +15,49 @@
 
 
 1 打印当前时间（例如 2020-04-07 13:41:42），写出SQL语句和结果
+mysql> select now();
++---------------------+
+| now()               |
++---------------------+
+| 2020-04-10 08:02:48 |
++---------------------+
+1 row in set (0.00 sec)
 
-2 组合打印自己的姓名和学号
-
-(例如 张三+123456 或者 zhangsan+123456 显示需包含加号)，写出SQL语句和结果
+2 组合打印自己的姓名和学号(例如 张三+123456 或者 zhangsan+123456 显示需包含加号)，写出SQL语句和结果
+mysql> SELECT 'zhulei+17061636';
++-----------------+
+| zhulei+17061636 |
++-----------------+
+| zhulei+17061636 |
++-----------------+
+1 row in set (0.00 sec)
 
 3 建立如下表1和表2，写出建表语句和插入语句。
 
 表1：其中deptno为主键
 ```
-deptno, deptno,    loc
+deptno,dname,loc
 (10, "ACCOUNTING", "NEW YORK"),
 (20, "RESEARCH", "DALLAS"),
 (30, "SALES", "CHICAGO"),
 (40, "OPERATIONS", "BOSTON")
+```
+```
+mysql> create table test1(deptno int NOT NULL,dname varchar(20),loc varchar(20),UNIQUE(deptno));
+Query OK, 0 rows affected (0.04 sec)
+mysql> insert into test1 values
+    -> (10, "ACCOUNTING", "NEW YORK"),(20, "RESEARCH", "DALLAS"),(30, "SALES", "CHICAGO"),(40, "OPERATIONS", "BOSTON");
+Query OK, 4 rows affected (0.01 sec)
+mysql> select * from test1;
++--------+------------+----------+
+| deptno | dname      | loc      |
++--------+------------+----------+
+|     10 | ACCOUNTING | NEW YORK |
+|     20 | RESEARCH   | DALLAS   |
+|     30 | SALES      | CHICAGO  |
+|     40 | OPERATIONS | BOSTON   |
++--------+------------+----------+
+4 rows in set (0.00 sec)
 ```
 
 表2：其中empno字段为主键
@@ -49,14 +77,54 @@ deptno, deptno,    loc
 	(7902, "FORD", "ANALYST", 7566, "1981-03-12", 3000, NULL, 20),
 	(7934, "MILLER", "CLERK", 7782, "1981-03-12", 1300, NULL, 10)
 ```
+```
+mysql> create table test2(deptno int NOT NULL,empno int PRIMARY KEY,ename varchar(20),job varchar(20),MGR int,Hiredate date,sal float,comm float);
+mysql> INSERT INTO test2 (empno, ename, job, MGR, Hiredate, sal, comm, deptno) VALUES
+    -> (7369, "SMITH", "CLERK", 7902, "1981-03-12", 800.00, NULL, 20),(7499, "ALLEN", "SALESMAN", 7698, "1982-03-12", 1600, 300, 30),(7521, "WARD", "SALESMAN", 7698, "1838-03-12", 1250, 500, 30),(7566, "JONES", "MANAGER", 7839, "1981-03-12", 2975, NULL, 20),(7654, "MARTIN", "SALESMAN", 7698, "1981-01-12", 1250, 1400, 30),(7698, "BLAKE", "MANAGER", 7839, "1985-03-12", 2450, NULL, 10),(7788, "SCOTT", "ANALYST", 7566, "1981-03-12", 3000, NULL, 20),(7839, "KING", "PRESIDENT", NULL, "1981-03-12", 5000, NULL, 10),(7844, "TURNER", "SALESMAN", 7689, "1981-03-12", 1500, 0, 30),(7878, "ADAMS", "CLERK", 7788, "1981-03-12", 1100, NULL,20),(7900, "JAMES", "CLERK", 7698,"1981-03-12",  950, NULL, 30),(7902, "FORD", "ANALYST", 7566, "1981-03-12", 3000, NULL, 20),(7934, "MILLER", "CLERK", 7782, "1981-03-12", 1300, NULL, 10);
+Query OK, 13 rows affected (0.00 sec)
+Records: 13  Duplicates: 0  Warnings: 0
+mysql> select * from test2;
++--------+-------+--------+-----------+------+------------+------+------+
+| deptno | empno | ename  | job       | MGR  | Hiredate   | sal  | comm |
++--------+-------+--------+-----------+------+------------+------+------+
+|     20 |  7369 | SMITH  | CLERK     | 7902 | 1981-03-12 |  800 | NULL |
+|     30 |  7499 | ALLEN  | SALESMAN  | 7698 | 1982-03-12 | 1600 |  300 |
+|     30 |  7521 | WARD   | SALESMAN  | 7698 | 1838-03-12 | 1250 |  500 |
+|     20 |  7566 | JONES  | MANAGER   | 7839 | 1981-03-12 | 2975 | NULL |
+|     30 |  7654 | MARTIN | SALESMAN  | 7698 | 1981-01-12 | 1250 | 1400 |
+|     10 |  7698 | BLAKE  | MANAGER   | 7839 | 1985-03-12 | 2450 | NULL |
+|     20 |  7788 | SCOTT  | ANALYST   | 7566 | 1981-03-12 | 3000 | NULL |
+|     10 |  7839 | KING   | PRESIDENT | NULL | 1981-03-12 | 5000 | NULL |
+|     30 |  7844 | TURNER | SALESMAN  | 7689 | 1981-03-12 | 1500 |    0 |
+|     20 |  7878 | ADAMS  | CLERK     | 7788 | 1981-03-12 | 1100 | NULL |
+|     30 |  7900 | JAMES  | CLERK     | 7698 | 1981-03-12 |  950 | NULL |
+|     20 |  7902 | FORD   | ANALYST   | 7566 | 1981-03-12 | 3000 | NULL |
+|     10 |  7934 | MILLER | CLERK     | 7782 | 1981-03-12 | 1300 | NULL |
++--------+-------+--------+-----------+------+------------+------+------+
+13 rows in set (0.00 sec)
 
 3.1 表2 中再插入一条记录：
 
 `(你的学号，你的姓名或者拼音， “CLERK”, 7782, 你的生日,  NULL, NULL, 10)`
  
 例如：`(12345,  "Zhangsan", "sTUDENT", 7782, "2000-03-12", NULL, NULL, 10)`
+mysql> insert into test2 values
+    -> (10,17061636,"zhulei","student",7782,"1998-11-25",NULL,NULL);
+Query OK, 1 row affected (0.00 sec)
 
 3.2 表中入职时间（Hiredate字段）最短的人。
+```
+--不考虑学生本人
+mysql> select * from test2 where Year(Hiredate)>1981;
++--------+----------+--------+----------+------+------------+------+------+
+| deptno | empno    | ename  | job      | MGR  | Hiredate   | sal  | comm |
++--------+----------+--------+----------+------+------------+------+------+
+|     30 |     7499 | ALLEN  | SALESMAN | 7698 | 1982-03-12 | 1600 |  300 |
+|     10 |     7698 | BLAKE  | MANAGER  | 7839 | 1985-03-12 | 2450 | NULL |
+|     10 | 17061636 | zhulei | student  | 7782 | 1998-11-25 | NULL | NULL |
++--------+----------+--------+----------+------+------------+------+------+
+3 rows in set (0.00 sec)
+--可知入职最短的是BLAKE
 
 3.3 有几种职位（job字段）？在关系代数中，本操作是什么运算？
 
