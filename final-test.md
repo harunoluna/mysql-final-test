@@ -155,17 +155,46 @@ mysql> select * from test2 WHERE comm < 1000;
 
 3.5 计算每个人的收入(ename, sal + comm)；计算总共有多少人；计算所有人的平均收入。 提示：计算时 NULL 要当做 0 处理； 
 ```
-
+--个人收入
+mysql> select sum(sal+comm) from test2
+    -> where ename = 'SMITH ';
++---------------+
+| sum(sal+comm) |
++---------------+
+|           800 |
++---------------+
+1 row in set (0.00 sec)
+--所有人的平均收入
+mysql> select avg(sal+comm) from test2;
++---------------+
+| avg(sal+comm) |
++---------------+
+|          2020 |
++---------------+
+1 row in set (0.00 sec)
 ```
 
 
 3.6 显示每个人的下属, 没有下属的显示 NULL。本操作使用关系代数中哪几种运算？
+答：使用了选择，笛卡尔积。
 
 3.7 建立一个视图：每个人的empno, ename, job 和 loc。简述为什么要建立本视图。
+```
+create view view_test2 as select empno,ename,job,loc from test2;
+```
+答：1）提高了重用性，就像一个函数2）对数据库重构，却不影响程序的运行3）提高了安全性能，可以对不同的用户，设定不同的视图4）让数据更加清晰，想要什么样的数据，就创建什么样的视图
 
 3.8 为表2增加一个约束：deptno字段需要在表1中存在；这称做什么完整性？
+```
+ALTER test2 ADD CONSTRAINT fk_deptno FROEIGN KEY(deptno) REFERENCES test1(deptno);
+```
+答：这称作约束完整性。
 
 3.9 为表2增加一个索引：ename 字段。简述为什么要在 ename 字段建立索引
+```
+CREATE INDEX index_for_test2 ON test2(ename(20)); 
+```
+答：使查询速度变快。
 
 3.10 将表2的 sal 字段改名为 salary
 ```
@@ -173,6 +202,16 @@ ALTER TABLE test2 CHANGE sal salary INT;
 ```
 
 3.11 撰写一个函数 get_deptno_from_empno，输入 empno，输出对应的 deptno。 简述函数和存储过程有什么不同。
+```
+DELIMITER $$
+CREATE FUNCTION get_deptno_from_empno (empno INT)
+RETURNS DOUBLE
+BEGIN
+SELECT deptno from test2 where empno = (SELECT empno FROM test2);
+END$$
+DELIMITER ;
+```
+答：1）一般来说，存储过程实现的功能要复杂一点，而函数的实现的功能针对性比较强。存储过程，功能强大，可以执行包括修改表等一系列数据库操作；用户定义函数不能用于执行一组修改全局数据库状态的操作。2）对于存储过程来说可以返回参数，如记录集，而函数只能返回值或者表对象。函数只能返回一个变量；而存储过程可以返回多个。存储过程的参数可以有IN,OUT,INOUT三种类型，而函数只能有IN类存储过程声明时不需要返回类型，而函数声明时需要描述返回类型，且函数体中必须包含一个有效的RETURN语句。3）存储过程，可以使用非确定函数，不允许在用户定义函数主体中内置非确定函数。4）存储过程一般是作为一个独立的部分来执行（ EXECUTE 语句执行），而函数可以作为查询语句的一个部分来调用（SELECT调用），由于函数可以返回一个表对象，因此它可以在查询语句中位于FROM关键字的后面。 SQL语句中不可用存储过程，而可以使用函数。
 
 4 建立一个新用户，账号为自己的姓名拼音，密码为自己的学号；
 ```
@@ -210,7 +249,7 @@ mysql> show grants for 'zhulei'@'localhost';
 答：表1符合第一范式也符合第二范式，因为表内无重复，各数据可被唯一区分。表2符合第一范式但不符合第二范式，因为表内无重复，但没有存储各个数据的唯一标识。
 
 6 画出表 1 和表 2 所对应的 E-R 图
-
+![](https://github.com/harunoluna/mysql-final-test/blob/master/ER%E5%9B%BE.jpg) 
 
 7 什么是外模式，什么是内模式。为什么要分成这几层？
 答：外模式又称子模式或用户模式，对应于用户级。它是某个或某几个用户所看到的数据库的数据视图，是与某一应用有关的数据的逻辑表示。外模式是从模式导出的一个子集，包含模式中允许特定用户使用的那部分数据。用户可以通过外模式描述语言来描述、定义对应于用户的数据记录(外模式)，也可以利用数据操纵语言(Data Manipulation Language，DML)对这些数据记录进行操作。外模式反映了数据库系统的用户观。
